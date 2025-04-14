@@ -2,6 +2,6 @@
 
 #include "calculator.hpp"
 
-int main(int argc, char *argv[]) {
-
+int main() {
+    std::cout << "Howdy" << std::endl;
 }
