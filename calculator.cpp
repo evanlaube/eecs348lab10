@@ -1,5 +1,42 @@
 #include "calculator.hpp"
-#include <utility>
+#include <cmath>
+
+double parse_number(const std::string &expression) {
+    std::string cpy = expression;
+    int sign = 1;
+    if(cpy[0] == '-') {
+        sign = -1;
+        cpy.erase(0, 1);
+    } else if(cpy[0] == '+') {
+        cpy.erase(0, 1);
+    } 
+    
+    int dotIndex = cpy.length();
+    if(countDots(cpy) == 1) {
+        while(cpy[--dotIndex] != '.');
+    }
+
+
+    int wholes = dotIndex;
+    int decimals = cpy.length() - (dotIndex + 1);
+
+    double total = 0;
+
+    for(int i = 0; i < wholes; i++) {
+        int exponent = wholes - i - 1;
+        int digit = cpy[i] - '0';
+        total += digit * pow(10, exponent);
+    }
+
+    for(int i = 0; i < decimals; i++) {
+        int index = dotIndex + 1 + i;
+        int exponent = -(i + 1);
+        int digit = cpy[index] - '0';
+        total += digit * pow(10, exponent);
+    }
+
+    return total * sign;
+}
 
 bool validateNumber(const std::string &expression) {
     int dotCount = countDots(expression);
@@ -139,4 +176,8 @@ void normalize(std::string &a, std::string &b) {
     // Add signs back on
     a = aSign + a;
     b = bSign + b;
+}
+
+std::string add(std::string a, std::string b) {
+
 }
