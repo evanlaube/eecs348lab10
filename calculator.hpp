@@ -16,4 +16,6 @@ bool hasValidCharacters(const std::string &expression);
 int countDots(const std::string &expression);
 void normalize(std::string &a, std::string &b);
 
+std::string add(std::string a, std::string b);
+
 #endif // __CALCULATOR_HPP

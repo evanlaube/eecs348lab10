@@ -1,5 +1,6 @@
 #include "calculator.hpp"
 #include <cmath>
+#include <iostream>
 
 double parse_number(const std::string &expression) {
     std::string cpy = expression;
@@ -178,6 +179,62 @@ void normalize(std::string &a, std::string &b) {
     b = bSign + b;
 }
 
+// Assume strings are validated numbers and normalized
 std::string add(std::string a, std::string b) {
+    // Get the signs from the strings (normalized strings always have sign)
+    char aSign = a[0];
+    char bSign = b[0];
 
+    // Remove sign from strings
+    a.erase(0, 1);
+    b.erase(0, 1);
+
+    // Store result in string
+    std::string result;
+
+    // If the signs are the same, just add them and keep the same sign
+    if(aSign == bSign) {
+        int carry = 0;
+        std::string reverse;
+        for(int i = a.length()-1; i >= 0; i--) {
+            if(a[i] == '.') {
+                reverse += '.';
+                continue;
+            }
+
+            int digA = a[i] - '0';
+            int digB = b[i] - '0';
+
+            int sum = digA + digB;
+            // Add in carry from last sum
+            int digit = sum + carry;
+
+            if(digit > 9) {
+                carry = 1;
+                digit -= 10;
+            } else {
+                carry = 0;
+            }
+
+            reverse += (digit % 10 + '0');
+        }
+        
+        // Check for final carry
+        if(carry == 1) {
+            reverse += '1';
+        }
+
+        // Reverse result
+        for(int i = reverse.length(); i >= 0; i--) {
+            result += reverse[i];
+        }
+
+        // Add sign back
+        result = aSign + result;
+        
+    } else {
+
+    }
+
+    return result;
 }
