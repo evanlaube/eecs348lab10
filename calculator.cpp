@@ -71,7 +71,7 @@ bool validateNumber(const std::string &expression) {
     }
 
     // Make sure that there is at least one digit
-    if((expression[0] == '+' || expression[0] == '+') && expression.length() < 2) {
+    if((expression[0] == '+' || expression[0] == '-') && expression.length() < 2) {
         return false;
     }
 
@@ -179,6 +179,57 @@ void normalize(std::string &a, std::string &b) {
     b = bSign + b;
 }
 
+bool isGreater(std::string a, std::string b) {
+    for (size_t i = 0; i < a.length(); i++) {
+        if (a[i] == '.') continue; // skip the decimal
+
+        if (a[i] > b[i]) return true;
+        if (a[i] < b[i]) return false;
+    }
+    return false; // equal
+}
+
+// Helper method. Ignores signs. a must be larger than b
+std::string unsignedSubtract(std::string a, std::string b) {
+    std::string result;
+    int borrow = 0;
+
+    for (int i = a.length() - 1; i >= 0; i--) {
+        if (a[i] == '.') {
+            result += '.';
+            continue;
+        }
+
+        int digitA = a[i] - '0';
+        int digitB = b[i] - '0';
+
+        digitA -= borrow;
+
+        if (digitA < digitB) {
+            digitA += 10;
+            borrow = 1;
+        } else {
+            borrow = 0;
+        }
+
+        int diff = digitA - digitB;
+        result += (diff + '0');
+    }
+
+    // Reverse  result string
+    std::reverse(result.begin(), result.end());
+
+    // Strip leading zeros (but preserve 0 before decimal point)
+    size_t firstNonZero = result.find_first_not_of('0');
+    if (firstNonZero != std::string::npos && result[firstNonZero] != '.') {
+        result = result.substr(firstNonZero);
+    } else if (result[0] == '0' && result[1] != '.') {
+        result = "0" + result.substr(1);  // ensure leading zero before decimal
+    }
+
+    return result;
+}
+
 // Assume strings are validated numbers and normalized
 std::string add(std::string a, std::string b) {
     // Get the signs from the strings (normalized strings always have sign)
@@ -225,15 +276,22 @@ std::string add(std::string a, std::string b) {
         }
 
         // Reverse result
-        for(int i = reverse.length(); i >= 0; i--) {
+        for(int i = reverse.length()-1; i >= 0; i--) {
             result += reverse[i];
         }
 
         // Add sign back
         result = aSign + result;
         
-    } else {
-
+    } else { // If the signs are not matching
+        if(isGreater(a, b)) {
+            return aSign + unsignedSubtract(a, b);
+        } else if(isGreater(b,a)) {
+            return bSign + unsignedSubtract(b, a);
+        } else {
+            // Then they subtract to zero
+            return "0";
+        }
     }
 
     return result;
