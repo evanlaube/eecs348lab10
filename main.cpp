@@ -25,8 +25,6 @@ int main() {
     std::cin >> fileName;
     
     std::ifstream inputFile(fileName);
-    std::string a = "99";
-    std::string b = "1";
 
     if(inputFile.is_open()) {
         processInputFile(inputFile);

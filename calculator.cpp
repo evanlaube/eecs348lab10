@@ -216,16 +216,12 @@ std::string unsignedSubtract(std::string a, std::string b) {
         result += (diff + '0');
     }
 
-    // Reverse  result string
-    std::reverse(result.begin(), result.end());
-
-    // Strip leading zeros (but preserve 0 before decimal point)
-    size_t firstNonZero = result.find_first_not_of('0');
-    if (firstNonZero != std::string::npos && result[firstNonZero] != '.') {
-        result = result.substr(firstNonZero);
-    } else if (result[0] == '0' && result[1] != '.') {
-        result = "0" + result.substr(1);  // ensure leading zero before decimal
+    // Reverse result string
+    std::string reverse;
+    for(int i = result.length(); i >= 0; i--) {
+        reverse += result[i];
     }
+    result = reverse;
 
     return result;
 }
